@@ -70,7 +70,7 @@ void Game::processEvents()
 	sf::Event newEvent;
 	while (m_window.pollEvent(newEvent))
 	{
-		if ( sf::Event::Closed == newEvent.type) // window message
+		if (sf::Event::Closed == newEvent.type) // window message
 		{
 			m_exitGame = true;
 		}
@@ -93,16 +93,9 @@ void Game::processKeys(sf::Event t_event)
 		m_exitGame = true;
 	}
 
-	if (sf::Keyboard::Space == t_event.key.code)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 	{
-		if (m_direction == 1)
-		{
-			m_direction = -1;
-		}
-		else
-		{
-			m_direction = 1;
-		}
+			speed *= -1;
 	}
 }
 
@@ -116,7 +109,29 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
+	time += t_deltaTime.asSeconds();
+	m_time.setString("Timer: " + std::to_string(static_cast <int> (time)));
+	pacmanX += speed;
+	pacman.setPosition(pacmanX, pacmanY);
 
+	if (ghostX > pacmanX)
+	{
+		ghostX -= ghostSpeed;
+	}
+	else
+	{
+		ghostX +=ghostSpeed;
+	}
+	for (int i = 0; i < MAX_DOTS; i++)
+	{
+		if (pacman.getGlobalBounds().intersects(circles[i].getGlobalBounds()))
+		{
+			circles[i].setPosition(0, 0);
+			circles[i].setFillColor(sf::Color::Transparent);
+			score++;
+		}
+	}
+	ghost.setPosition(ghostX, 245);
 
 
 }
@@ -131,21 +146,13 @@ void Game::render()
 	{
 		m_window.draw(circles[i]);
 	}
+	m_window.draw(m_time);
+	m_window.draw(m_scoreMsg);
 	m_window.draw(borderTop);
 	m_window.draw(borderBottom);
 	m_window.draw(ghost);
 	m_window.draw(pacman);
 	m_window.display();
-}
-
-void Game::movePacman()
-{
-	//pacman.move()
-}
-
-void Game::moveGhost()
-{
-
 }
 
 /// <summary>
@@ -157,14 +164,24 @@ void Game::setupFontAndText()
 	{
 		std::cout << "problem loading arial black font" << std::endl;
 	}
-	m_welcomeMessage.setFont(m_ArialBlackfont);
-	m_welcomeMessage.setString("SFML Game");
-	m_welcomeMessage.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
-	m_welcomeMessage.setPosition(40.0f, 40.0f);
-	m_welcomeMessage.setCharacterSize(80U);
-	m_welcomeMessage.setOutlineColor(sf::Color::Red);
-	m_welcomeMessage.setFillColor(sf::Color::Black);
-	m_welcomeMessage.setOutlineThickness(3.0f);
+
+	m_time.setFont(m_ArialBlackfont);
+	m_time.setString("Timer" + std::to_string(time));
+	m_time.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
+	m_time.setPosition(40.0f, 40.0f);
+	m_time.setCharacterSize(20U);
+	m_time.setOutlineColor(sf::Color::Red);
+	m_time.setFillColor(sf::Color::White);
+	m_time.setOutlineThickness(3.0f);
+
+	m_scoreMsg.setFont(m_ArialBlackfont);
+	m_scoreMsg.setString("Score" + std::to_string(score));
+	m_scoreMsg.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
+	m_scoreMsg.setPosition(400.0f, 40.0f);
+	m_scoreMsg.setCharacterSize(20U);
+	m_scoreMsg.setOutlineColor(sf::Color::Red);
+	m_scoreMsg.setFillColor(sf::Color::White);
+	m_scoreMsg.setOutlineThickness(3.0f);
 
 }
 
@@ -180,21 +197,18 @@ void Game::setupSprite()
 	}
 	m_logoSprite.setTexture(m_logoTexture);
 	m_logoSprite.setPosition(300.0f, 180.0f);
+
+
 }
 
 void Game::makeDots()
 {
+	int berryLocation = rand();
 	for (int i = 0; i < MAX_DOTS; i++)
 	{
-		if (i > 0)
-		{
-			previous = i - 1;
-		}
 		circles[i].setPosition(posx, posy);
 		circles[i].setRadius(radius);
-		circles[i].setFillColor(sf::Color::Black);
-
-		circles[previous].setFillColor(sf::Color::Green);
+		circles[i].setFillColor(sf::Color::Green);
 
 		posx = posx + 50;
 	}
@@ -212,7 +226,7 @@ void Game::makeDots()
 	borderBottom.setFillColor(sf::Color::Blue);
 
 	ghost.setSize(sf::Vector2f(50, 50));
-	ghost.setPosition(750, 245);
+	ghost.setPosition(ghostX, 245);
 	ghost.setFillColor(sf::Color::Red);
 }
 

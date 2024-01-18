@@ -29,38 +29,44 @@ private:
 	void update(sf::Time t_deltaTime);
 	void render();
 
-	void movePacman();
-	void moveGhost();
-	
 	void setupFontAndText();
 	void setupSprite();
 
-	const float MAX_DOTS = 17;
+	static const int MAX_DOTS = 17;
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
 	sf::Text m_welcomeMessage; // text used for message on screen
+
+	sf::Text m_time;
+	sf::Text m_scoreMsg;
+
 	sf::Texture m_logoTexture; // texture used for sfml logo
 	sf::Sprite m_logoSprite; // sprite used for sfml logo
-	sf::CircleShape circles[17];
+	sf::CircleShape circles[MAX_DOTS];
+	sf::CircleShape powerUp;
 	sf::CircleShape pacman;
 	
 	sf::RectangleShape ghost;
 	sf::RectangleShape borderTop;
 	sf::RectangleShape borderBottom;
 
-	int m_direction = 1;
+	int score = 0;
+	float time = 0.0;
 
+	int speed = 1;
+	float ghostSpeed = 1.2;
 
 	float pacmanX = 10;
 	float pacmanY = 245;
+
+	float ghostX = 750;
 
 	float posx = 10.0;
 	float posy = 255.0;
 	float width = 800.0;
 	float height = 40.0;
 	float radius = 15;
-	int previous = 0;
 	bool m_exitGame; // control exiting game
 
 };
