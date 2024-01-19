@@ -7,6 +7,7 @@
 
 #include "Game.h"
 #include <iostream>
+#include <ctime>
 
 
 
@@ -20,6 +21,7 @@ Game::Game() :
 	m_window{ sf::VideoMode{ 800U, 600U, 32U }, "SFML Game" },
 	m_exitGame{false} //when true game will exit
 {
+	srand(time(nullptr));
 	setupFontAndText(); // load font 
 	setupSprite(); // load texture
 	makeDots();
@@ -109,10 +111,19 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
-	time += t_deltaTime.asSeconds();
-	m_time.setString("Timer: " + std::to_string(static_cast <int> (time)));
+	timer += t_deltaTime.asSeconds();
+	m_time.setString("Timer: " + std::to_string(static_cast <int> (timer)));
 	pacmanX += speed;
 	pacman.setPosition(pacmanX, pacmanY);
+
+	if (pacmanX == borderLeft)
+	{
+		pacmanX = borderRight;
+	}
+	else if (pacmanX == borderRight)
+	{
+		pacmanX = borderLeft;
+	}
 
 	if (ghostX > pacmanX)
 	{
@@ -129,6 +140,10 @@ void Game::update(sf::Time t_deltaTime)
 			circles[i].setPosition(0, 0);
 			circles[i].setFillColor(sf::Color::Transparent);
 			score++;
+		}
+		else if (pacman.getGlobalBounds().intersects(circles[berryLocation].getGlobalBounds()))
+		{
+
 		}
 	}
 	ghost.setPosition(ghostX, 245);
@@ -166,7 +181,7 @@ void Game::setupFontAndText()
 	}
 
 	m_time.setFont(m_ArialBlackfont);
-	m_time.setString("Timer" + std::to_string(time));
+	m_time.setString("Timer" + std::to_string(timer));
 	m_time.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
 	m_time.setPosition(40.0f, 40.0f);
 	m_time.setCharacterSize(20U);
@@ -203,11 +218,18 @@ void Game::setupSprite()
 
 void Game::makeDots()
 {
-	int berryLocation = rand();
+	//int berryLocation = (rand() % MAX_DOTS) + 1;
+
 	for (int i = 0; i < MAX_DOTS; i++)
 	{
 		circles[i].setPosition(posx, posy);
+		
 		circles[i].setRadius(radius);
+		if (i == berryLocation)
+		{
+			circles[berryLocation].setRadius(20);
+			circles[berryLocation].setPosition(posx - 4, posy - 4);
+		}
 		circles[i].setFillColor(sf::Color::Green);
 
 		posx = posx + 50;

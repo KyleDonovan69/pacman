@@ -52,7 +52,9 @@ private:
 	sf::RectangleShape borderBottom;
 
 	int score = 0;
-	float time = 0.0;
+	float timer = 0.0;
+
+	int berryLocation = (rand() % MAX_DOTS) + 1;
 
 	int speed = 1;
 	float ghostSpeed = 1.2;
@@ -61,6 +63,9 @@ private:
 	float pacmanY = 245;
 
 	float ghostX = 750;
+
+	int borderLeft = 0;
+	int borderRight = 800;
 
 	float posx = 10.0;
 	float posy = 255.0;
