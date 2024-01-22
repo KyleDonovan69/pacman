@@ -40,6 +40,7 @@ private:
 
 	sf::Text m_time;
 	sf::Text m_scoreMsg;
+	sf::Text m_title;
 
 	sf::Texture m_logoTexture; // texture used for sfml logo
 	sf::Sprite m_logoSprite; // sprite used for sfml logo
@@ -54,7 +55,14 @@ private:
 	int score = 0;
 	float timer = 0.0;
 
+	sf::Clock powerUpTimer;
+	bool timerRunning = false;
+
 	int berryLocation = (rand() % MAX_DOTS) + 1;
+
+	bool powerUP = false;
+
+	int count = 0;
 
 	int speed = 1;
 	float ghostSpeed = 1.2;

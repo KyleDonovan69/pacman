@@ -97,7 +97,7 @@ void Game::processKeys(sf::Event t_event)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 	{
-			speed *= -1;
+		speed *= -1;
 	}
 }
 
@@ -113,8 +113,15 @@ void Game::update(sf::Time t_deltaTime)
 	}
 	timer += t_deltaTime.asSeconds();
 	m_time.setString("Timer: " + std::to_string(static_cast <int> (timer)));
+	m_scoreMsg.setString("Score" + std::to_string(score));
 	pacmanX += speed;
 	pacman.setPosition(pacmanX, pacmanY);
+	ghost.setPosition(ghostX, 245);
+
+	if (!timerRunning) {//creates timer
+		powerUpTimer.restart();//resets timer for pacman
+		timerRunning = true;
+	}
 
 	if (pacmanX == borderLeft)
 	{
@@ -125,14 +132,39 @@ void Game::update(sf::Time t_deltaTime)
 		pacmanX = borderLeft;
 	}
 
-	if (ghostX > pacmanX)
+	if (ghostX == borderLeft)
 	{
-		ghostX -= ghostSpeed;
+		ghostX = borderRight;
+	}
+	else if (ghostX == borderRight)
+	{
+		ghostX = borderLeft;
+	}
+
+	if (powerUP == false)
+	{
+		if (ghostX > pacmanX)
+		{
+			ghostX -= ghostSpeed;
+		}
+		else
+		{
+			ghostX += ghostSpeed;
+		}
 	}
 	else
 	{
-		ghostX +=ghostSpeed;
+		if (ghostX > pacmanX)
+		{
+			ghostX += ghostSpeed;
+		}
+		else
+		{
+			ghostX -= ghostSpeed;
+		}
 	}
+
+
 	for (int i = 0; i < MAX_DOTS; i++)
 	{
 		if (pacman.getGlobalBounds().intersects(circles[i].getGlobalBounds()))
@@ -143,12 +175,27 @@ void Game::update(sf::Time t_deltaTime)
 		}
 		else if (pacman.getGlobalBounds().intersects(circles[berryLocation].getGlobalBounds()))
 		{
+			circles[berryLocation].setPosition(0, 0);
+			circles[berryLocation].setFillColor(sf::Color::Transparent);
+			score + 5;
+			ghost.setFillColor(sf::Color::Blue);
+			powerUP = true;
+			count++;
+			powerUpTimer.restart();
 
 		}
+
+		if (count == MAX_DOTS)
+		{
+			makeDots();
+		}
 	}
-	ghost.setPosition(ghostX, 245);
 
-
+		if (powerUpTimer.getElapsedTime().asSeconds() >= 5.0f)//does this after certain time
+		{
+			ghost.setFillColor(sf::Color::Red);
+			powerUP = false;
+		}
 }
 
 /// <summary>
@@ -163,6 +210,7 @@ void Game::render()
 	}
 	m_window.draw(m_time);
 	m_window.draw(m_scoreMsg);
+	m_window.draw(m_title);
 	m_window.draw(borderTop);
 	m_window.draw(borderBottom);
 	m_window.draw(ghost);
@@ -192,11 +240,20 @@ void Game::setupFontAndText()
 	m_scoreMsg.setFont(m_ArialBlackfont);
 	m_scoreMsg.setString("Score" + std::to_string(score));
 	m_scoreMsg.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
-	m_scoreMsg.setPosition(400.0f, 40.0f);
+	m_scoreMsg.setPosition(700.0f, 40.0f);
 	m_scoreMsg.setCharacterSize(20U);
 	m_scoreMsg.setOutlineColor(sf::Color::Red);
 	m_scoreMsg.setFillColor(sf::Color::White);
 	m_scoreMsg.setOutlineThickness(3.0f);
+
+	m_title.setFont(m_ArialBlackfont);
+	m_title.setString("NOT PACMAN");
+	m_title.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
+	m_title.setPosition(250.0f, 40.0f);
+	m_title.setCharacterSize(40U);
+	m_title.setOutlineColor(sf::Color::Red);
+	m_title.setFillColor(sf::Color::Black);
+	m_title.setOutlineThickness(3.0f);
 
 }
 
