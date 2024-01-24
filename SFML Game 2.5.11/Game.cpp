@@ -45,6 +45,7 @@ Game::~Game()
 /// </summary>
 void Game::run()
 {	
+
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	const float fps{ 60.0f };
@@ -134,11 +135,11 @@ void Game::update(sf::Time t_deltaTime)
 
 	if (ghostX == borderLeft)
 	{
-		ghostX = borderRight;
+		ghostX = borderLeft;
 	}
 	else if (ghostX == borderRight)
 	{
-		ghostX = borderLeft;
+		ghostX = borderRight;
 	}
 
 	if (powerUP == false)
@@ -164,6 +165,19 @@ void Game::update(sf::Time t_deltaTime)
 		}
 	}
 
+	//if (pacman.getGlobalBounds().intersects(ghost.getGlobalBounds()))
+	//{
+	//	if (powerUP == true)
+	//	{
+	//		isDead = true;
+	//		ghost.setPosition(borderRight + 30, 245);
+	//		ghostSpeed == 0;
+	//	}
+	//	else
+	//	{
+	//		gameOver = true;
+	//	}
+	//}
 
 	for (int i = 0; i < MAX_DOTS; i++)
 	{
@@ -172,30 +186,33 @@ void Game::update(sf::Time t_deltaTime)
 			circles[i].setPosition(0, 0);
 			circles[i].setFillColor(sf::Color::Transparent);
 			score++;
+			count++;
+			if (count == MAX_DOTS - 1)
+			{
+				makeDots();
+				count = 0;
+				break;
+			}
 		}
-		else if (pacman.getGlobalBounds().intersects(circles[berryLocation].getGlobalBounds()))
+		if (pacman.getGlobalBounds().intersects(circles[berryLocation].getGlobalBounds()))
 		{
+			
+			score = score + 5;
 			circles[berryLocation].setPosition(0, 0);
 			circles[berryLocation].setFillColor(sf::Color::Transparent);
-			score + 5;
 			ghost.setFillColor(sf::Color::Blue);
 			powerUP = true;
-			count++;
 			powerUpTimer.restart();
-
-		}
-
-		if (count == MAX_DOTS)
-		{
-			makeDots();
 		}
 	}
 
-		if (powerUpTimer.getElapsedTime().asSeconds() >= 5.0f)//does this after certain time
-		{
-			ghost.setFillColor(sf::Color::Red);
-			powerUP = false;
-		}
+	
+
+	if (powerUpTimer.getElapsedTime().asSeconds() >= 5.0f)//does this after certain time
+	{
+		ghost.setFillColor(sf::Color::Red);
+		powerUP = false;
+	}
 }
 
 /// <summary>
@@ -204,17 +221,24 @@ void Game::update(sf::Time t_deltaTime)
 void Game::render()
 {
 	m_window.clear(sf::Color::Black);
-	for (int i = 0; i < MAX_DOTS; i++)
+	if (gameOver == false)
 	{
-		m_window.draw(circles[i]);
+		for (int i = 0; i < MAX_DOTS; i++)
+		{
+			m_window.draw(circles[i]);
+		}
+		m_window.draw(m_time);
+		m_window.draw(m_scoreMsg);
+		m_window.draw(m_title);
+		m_window.draw(borderTop);
+		m_window.draw(borderBottom);
+		m_window.draw(ghost);
+		m_window.draw(pacman);
 	}
-	m_window.draw(m_time);
-	m_window.draw(m_scoreMsg);
-	m_window.draw(m_title);
-	m_window.draw(borderTop);
-	m_window.draw(borderBottom);
-	m_window.draw(ghost);
-	m_window.draw(pacman);
+	else
+	{
+
+	}
 	m_window.display();
 }
 
@@ -270,28 +294,6 @@ void Game::setupSprite()
 	m_logoSprite.setTexture(m_logoTexture);
 	m_logoSprite.setPosition(300.0f, 180.0f);
 
-
-}
-
-void Game::makeDots()
-{
-	//int berryLocation = (rand() % MAX_DOTS) + 1;
-
-	for (int i = 0; i < MAX_DOTS; i++)
-	{
-		circles[i].setPosition(posx, posy);
-		
-		circles[i].setRadius(radius);
-		if (i == berryLocation)
-		{
-			circles[berryLocation].setRadius(20);
-			circles[berryLocation].setPosition(posx - 4, posy - 4);
-		}
-		circles[i].setFillColor(sf::Color::Green);
-
-		posx = posx + 50;
-	}
-
 	pacman.setPosition(pacmanX, pacmanY);
 	pacman.setRadius(25);
 	pacman.setFillColor(sf::Color::Yellow);
@@ -307,5 +309,28 @@ void Game::makeDots()
 	ghost.setSize(sf::Vector2f(50, 50));
 	ghost.setPosition(ghostX, 245);
 	ghost.setFillColor(sf::Color::Red);
+
+}
+
+void Game::makeDots()
+{
+	 float x = 10.0;
+	posy = 255.0;
+	berryLocation = (rand() % MAX_DOTS);
+	for (int i = 0; i < MAX_DOTS; i++)
+	{
+		circles[i].setPosition(x, posy);
+		
+		circles[i].setRadius(radius);
+		if (i == berryLocation)
+		{
+			circles[berryLocation].setRadius(20);
+			circles[berryLocation].setPosition(x - 4, posy - 4);
+		}
+		circles[i].setFillColor(sf::Color::Green);
+
+		x = x + 50;
+	}
+
 }
 

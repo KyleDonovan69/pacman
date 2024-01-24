@@ -10,6 +10,7 @@
 /// Don't forget the endif at the bottom
 /// </summary>
 #include <SFML/Graphics.hpp>
+//#include <ctime>
 
 class Game
 {
@@ -25,6 +26,7 @@ private:
 
 	void processEvents();
 	void makeDots();
+	//void resetDots();
 	void processKeys(sf::Event t_event);
 	void update(sf::Time t_deltaTime);
 	void render();
@@ -58,14 +60,15 @@ private:
 	sf::Clock powerUpTimer;
 	bool timerRunning = false;
 
-	int berryLocation = (rand() % MAX_DOTS) + 1;
+	int berryLocation;// = (rand() % MAX_DOTS) + 1;
 
 	bool powerUP = false;
-
+	bool isDead = false;
+	bool gameOver = false;
 	int count = 0;
 
-	int speed = 1;
-	float ghostSpeed = 1.2;
+	int speed = 1.5;
+	float ghostSpeed = 1;
 
 	float pacmanX = 10;
 	float pacmanY = 245;
