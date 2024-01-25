@@ -34,7 +34,7 @@ private:
 	void setupFontAndText();
 	void setupSprite();
 
-	static const int MAX_DOTS = 17;
+	static const int MAX_DOTS = 16;
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
@@ -43,6 +43,7 @@ private:
 	sf::Text m_time;
 	sf::Text m_scoreMsg;
 	sf::Text m_title;
+	sf::Text m_gameOverMsg;
 
 	sf::Texture m_logoTexture; // texture used for sfml logo
 	sf::Sprite m_logoSprite; // sprite used for sfml logo

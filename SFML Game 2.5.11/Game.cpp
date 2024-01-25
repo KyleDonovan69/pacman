@@ -165,19 +165,19 @@ void Game::update(sf::Time t_deltaTime)
 		}
 	}
 
-	//if (pacman.getGlobalBounds().intersects(ghost.getGlobalBounds()))
-	//{
-	//	if (powerUP == true)
-	//	{
-	//		isDead = true;
-	//		ghost.setPosition(borderRight + 30, 245);
-	//		ghostSpeed == 0;
-	//	}
-	//	else
-	//	{
-	//		gameOver = true;
-	//	}
-	//}
+	if (pacman.getGlobalBounds().intersects(ghost.getGlobalBounds()))
+	{
+		if (powerUP == true)
+		{
+			isDead = true;
+			ghost.setPosition(borderRight + 30, 245);
+			ghostSpeed == 0;
+		}
+		else
+		{
+			gameOver = true;
+		}
+	}
 
 	for (int i = 0; i < MAX_DOTS; i++)
 	{
@@ -234,10 +234,11 @@ void Game::render()
 		m_window.draw(borderBottom);
 		m_window.draw(ghost);
 		m_window.draw(pacman);
+		
 	}
 	else
 	{
-
+		m_window.draw(m_gameOverMsg);
 	}
 	m_window.display();
 }
@@ -278,6 +279,15 @@ void Game::setupFontAndText()
 	m_title.setOutlineColor(sf::Color::Red);
 	m_title.setFillColor(sf::Color::Black);
 	m_title.setOutlineThickness(3.0f);
+
+	m_gameOverMsg.setFont(m_ArialBlackfont);
+	m_gameOverMsg.setString("GAME OVER");
+	m_gameOverMsg.setStyle(sf::Text::Italic | sf::Text::Bold);
+	m_gameOverMsg.setPosition(40.0f, 200.0f);
+	m_gameOverMsg.setCharacterSize(100U);
+	m_gameOverMsg.setOutlineColor(sf::Color::Blue);
+	m_gameOverMsg.setFillColor(sf::Color::Black);
+	m_gameOverMsg.setOutlineThickness(3.0f);
 
 }
 
